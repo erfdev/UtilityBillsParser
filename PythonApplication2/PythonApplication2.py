@@ -3,7 +3,8 @@ import os
 import tabula
 
 import xlsxwriter
-from pdf2image import convert_from_path
+#For pdf2image to work you need to download poppler include the bin/ dir in $PATH
+from pdf2image import convert_from_path 
 
 
 import pdfminer3
@@ -42,7 +43,7 @@ def convert_pdf_to_txt(path, pages=None):
     return text
 
 #######################################################################################################
-Month = 'September'
+Month = 'September' #Enter Month Here
 Bill = Month+'\document-0.pdf'
 
 text = convert_pdf_to_txt(Bill, pages=[1])
