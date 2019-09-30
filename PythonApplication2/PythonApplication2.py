@@ -15,7 +15,8 @@ from pdfminer3.pdfpage import PDFPage
 from io import StringIO
 from PIL import Image
 import os 
-
+from tkinter import *
+from tkinter import filedialog
 
 cwd = os.getcwd()
 ls  = os.listdir()
@@ -87,29 +88,84 @@ billP = pages[0].crop((550,70,830,350))
 #billP.show()
 billP.save(Month+'\Bill-1.jpg', 'JPEG')
 
+write_to_wb = False
 
-workbook = xlsxwriter.Workbook(Month+'\\'+Month+'_Utilities.xlsx')
-cell_format = workbook.add_format({'bold': True, 'italic': True})
-cell_format2 = workbook.add_format({'bold': True, 'fg_color':'#FFFF00'})
-worksheet = workbook.add_worksheet('44Main')
-worksheet.set_column(0,0,25)
-worksheet.write('A1', 'Enbridge Gas')
-worksheet.write('B1', round(gas_charge*.6,2))
-worksheet.write('A2', 'Elexicon Electricity')
-worksheet.write('B2', round(elexicon_charge*.6,2))
-worksheet.write('A3', 'TOTAL DUE',cell_format)
-worksheet.write('B3', '=B1+B2',cell_format2)
-worksheet.insert_image('B5', Month+'\Bill-0.jpg')
-worksheet.insert_image('H5', Month+'\Bill-1.jpg')
-worksheet = workbook.add_worksheet('44Basement')
-worksheet.set_column(0,0,25)
-worksheet.write('A1', 'Enbridge Gas')
-worksheet.write('B1', round(gas_charge*.4,2))
-worksheet.write('A2', 'Elexicon Electricity')
-worksheet.write('B2', round(elexicon_charge*.4,2))
-worksheet.write('A3', 'TOTAL DUE',cell_format)
-worksheet.write('B3', '=B1+B2',cell_format2)
-worksheet.insert_image('B5', Month+'\Bill-0.jpg')
-worksheet.insert_image('H5', Month+'\Bill-1.jpg')
+if write_to_wb :
+    workbook = xlsxwriter.Workbook(Month+'\\'+Month+'_Utilities.xlsx')
+    cell_format = workbook.add_format({'bold': True, 'italic': True})
+    cell_format2 = workbook.add_format({'bold': True, 'fg_color':'#FFFF00'})
+    worksheet = workbook.add_worksheet('44Main')
+    worksheet.set_column(0,0,25)
+    worksheet.write('A1', 'Enbridge Gas')
+    worksheet.write('B1', round(gas_charge*.6,2))
+    worksheet.write('A2', 'Elexicon Electricity')
+    worksheet.write('B2', round(elexicon_charge*.6,2))
+    worksheet.write('A3', 'TOTAL DUE',cell_format)
+    worksheet.write('B3', '=B1+B2',cell_format2)
+    worksheet.insert_image('B5', Month+'\Bill-0.jpg')
+    worksheet.insert_image('H5', Month+'\Bill-1.jpg')
+    worksheet = workbook.add_worksheet('44Basement')
+    worksheet.set_column(0,0,25)
+    worksheet.write('A1', 'Enbridge Gas')
+    worksheet.write('B1', round(gas_charge*.4,2))
+    worksheet.write('A2', 'Elexicon Electricity')
+    worksheet.write('B2', round(elexicon_charge*.4,2))
+    worksheet.write('A3', 'TOTAL DUE',cell_format)
+    worksheet.write('B3', '=B1+B2',cell_format2)
+    worksheet.insert_image('B5', Month+'\Bill-0.jpg')
+    worksheet.insert_image('H5', Month+'\Bill-1.jpg')
 
-workbook.close()
+    workbook.close()
+
+class App:
+    def __init__(self, master):
+
+        self.numbills = 0
+        frame = Frame(master)
+        frame.pack()
+
+        
+        self.v = StringVar()
+        self.v.set("Enter number of utilities")
+        self.instructions = Label(frame, textvariable=self.v)
+        self.instructions.pack(side=TOP)
+        self.button = Button(
+            frame, text="QUIT", fg="red", command=frame.quit
+            )
+        self.button.pack(side=BOTTOM)
+
+        self.buttontext = StringVar()
+        self.buttontext.set("Enter")
+        self.bill = Button(frame, textvariable=self.buttontext, command=self.set_numbills)
+        self.bill.pack(side=RIGHT)
+
+        self.num_bills_e = Entry(frame)
+        self.num_bills_e.pack(side=LEFT)
+        self.num_bills_e.delete(0,END)
+        self.num_bills_e.insert(0,"0")
+        
+
+
+    def set_numbills(self):
+        self.numbills = self.num_bills_e.get()
+        print ("hi there, everyone! You have entered:",self.numbills)
+        self.v.set(('You have entered :'+self.numbills+'\nPlease upload first bill'))
+        self.buttontext.set("Upload")
+        self.num_bills_e.pack_forget()
+        self.bill.pack()
+       
+        
+
+
+root = Tk()
+root.title("UtilityParser [Alpha0.1 by erfdev]")
+
+app = App(root)
+
+
+w = Label(root, text="Hello, world!")
+w.pack()
+#root.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("jpeg files","*.jpg"),("all files","*.*")))
+#print (root.filename)
+
+root.mainloop()
